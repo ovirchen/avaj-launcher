@@ -4,6 +4,7 @@
 package com.aircrafts;
 
 import com.simulator.WeatherTower;
+import com.simulator.Writer;
 
 public class JetPlane extends Aircraft implements Flyable {
     private WeatherTower weatherTower;
@@ -18,35 +19,40 @@ public class JetPlane extends Aircraft implements Flyable {
             case "SUN":
                 super.coordinates = new Coordinates(super.coordinates.getLongitude(),
                         super.coordinates.getLatitude() + 10, super.coordinates.getHeight() + 2);
-                System.out.println("JetPlane#" + this.name + "(" + this.id + "): Where is my sunglasses?");
+                Writer.writeMessage("JetPlane#" + super.name + "(" + super.id + "): Where is my sunglasses?");
                 break;
             case "RAIN":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(),
-                        this.coordinates.getLatitude() + 5, this.coordinates.getHeight());
-                System.out.println("JetPlane#" + this.name + "(" + this.id + "): It's raining. Better watch out for lightings.!");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude(),
+                        super.coordinates.getLatitude() + 5, super.coordinates.getHeight());
+                Writer.writeMessage("JetPlane#" + super.name + "(" + super.id + "): It's raining. Better watch out for lightings.");
                 break;
             case "FOG":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(),
-                        this.coordinates.getLatitude() + 1, this.coordinates.getHeight());
-                System.out.println("JetPlane#" + this.name + "(" + this.id + "): Again and again.");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude(),
+                        super.coordinates.getLatitude() + 1, super.coordinates.getHeight());
+                Writer.writeMessage("JetPlane#" + super.name + "(" + super.id + "): Again and again.");
                 break;
             case "SNOW":
                 super.coordinates = new Coordinates(super.coordinates.getLongitude(),
                         super.coordinates.getLatitude(), super.coordinates.getHeight() - 7);
-                System.out.println("JetPlane#" + super.name + "(" + super.id + "): OMG! Winter is coming!");
+                Writer.writeMessage("JetPlane#" + super.name + "(" + super.id + "): OMG! Winter is coming!");
                 break;
         }
-        if (this.coordinates.getHeight() == 0)
+        if (this.coordinates.getHeight() <= 0)
         {
-            System.out.println("JetPlane#" + super.name + "(" + super.id + ") landing.");
+            Writer.writeMessage("JetPlane#" + super.name + "(" + super.id + ") landing.");
             weatherTower.unregister(this);
-            System.out.println("Tower says: JetPlane#" + super.name + "(" + super.id + ") unregistered from weather tower.");
+            Writer.writeMessage("Tower says: JetPlane#" + super.name + "(" + super.id + ") unregistered from weather tower.");
+            Writer.writeMessage("Coordinates of JetPlane#" + super.name + "(" + super.id + "): " +
+                    super.coordinates.getLongitude() + " " + super.coordinates.getLatitude() +
+                    " " + super.coordinates.getHeight());
         }
     }
 
     public void registerTower(WeatherTower weatherTower) {
-        System.out.println("Tower says: JetPlane#" + super.name + "(" + super.id + "): registered to weather tower.");
-        this.weatherTower = weatherTower;
-        this.weatherTower.register(this);
+        if (this.coordinates.getHeight() > 0) {
+            Writer.writeMessage("Tower says: JetPlane#" + super.name + "(" + super.id + ") registered to weather tower.");
+            this.weatherTower = weatherTower;
+            this.weatherTower.register(this);
+        }
     }
 }

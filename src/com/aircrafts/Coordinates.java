@@ -10,27 +10,23 @@ public class Coordinates {
     private int height;
 
     public Coordinates(int longitude, int latitude, int height) {
-        try {
             this.longitude = longitude;
             if (longitude > 360)
                 this.longitude = 360;
             else if (longitude < 0)
-                throw new WrongValueException();
+                this.longitude = 0;
             this.latitude = latitude;
             if (latitude > 360)
                 this.latitude = 360;
             else if (latitude < 0)
-                throw new WrongValueException();
+                this.latitude = 0;
             this.height = height;
             if (height > 100)
                 this.height = 100;
             else if (height < 0)
-                throw new WrongValueException();
-        }
-        catch (WrongValueException e) {
-            System.out.println("Wrong coordinates value");
-        }
+                this.height = 0;
     }
+
     public int getLongitude() {
         return this.longitude;
     }
@@ -41,6 +37,4 @@ public class Coordinates {
         return this.height;
     }
 
-    private class WrongValueException extends Exception{
-    }
 }

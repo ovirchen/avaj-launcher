@@ -1,6 +1,7 @@
 package com.aircrafts;
 
 import com.simulator.WeatherTower;
+import com.simulator.Writer;
 
 public class Baloon extends Aircraft implements Flyable{
     private WeatherTower weatherTower;
@@ -10,41 +11,46 @@ public class Baloon extends Aircraft implements Flyable{
     }
 
     public void updateConditions() {
-        String weather = weatherTower.getWeather(this.coordinates);
+        String weather = weatherTower.getWeather(super.coordinates);
         switch (weather) {
             case "SUN":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude() + 2,
-                        this.coordinates.getLatitude(), this.coordinates.getHeight() + 4);
-                System.out.println("Baloon#" + this.name + "(" + this.id + "): Let's enjoy the good weather and take some pics.");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude() + 2,
+                        super.coordinates.getLatitude(), super.coordinates.getHeight() + 4);
+                Writer.writeMessage("Baloon#" + super.name + "(" + super.id + "): Let's enjoy the good weather and take some pics.");
                 break;
             case "RAIN":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(),
-                        this.coordinates.getLatitude(), this.coordinates.getHeight() - 5);
-                System.out.println("Baloon#" + this.name + "(" + this.id + "): Damn you rain! You messed up my baloon.");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude(),
+                        super.coordinates.getLatitude(), super.coordinates.getHeight() - 5);
+                Writer.writeMessage("Baloon#" + super.name + "(" + super.id + "): Damn you rain! You messed up my baloon.");
                 break;
             case "FOG":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(),
-                        this.coordinates.getLatitude(), this.coordinates.getHeight() - 3);
-                System.out.println("Baloon#" + this.name + "(" + this.id + "): I don't see anything!");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude(),
+                        super.coordinates.getLatitude(), super.coordinates.getHeight() - 3);
+                Writer.writeMessage("Baloon#" + super.name + "(" + super.id + "): I don't see anything!");
                 break;
             case "SNOW":
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(),
-                        this.coordinates.getLatitude(), this.coordinates.getHeight() - 15);
-                System.out.println("Baloon#" + this.name + "(" + this.id + "): It's snowing. We're gonna crash.");
+                super.coordinates = new Coordinates(super.coordinates.getLongitude(),
+                        super.coordinates.getLatitude(), super.coordinates.getHeight() - 15);
+                Writer.writeMessage("Baloon#" + super.name + "(" + super.id + "): It's snowing. We're gonna crash.");
                 break;
         }
-        if (this.coordinates.getHeight() == 0)
+        if (super.coordinates.getHeight() <= 0)
         {
-            System.out.println("Baloon#" + this.name + "(" + this.id + ") landing.");
+            Writer.writeMessage("Baloon#" + super.name + "(" + super.id + ") landing.");
             weatherTower.unregister(this);
-            System.out.println("Tower says: Baloon#" + this.name + "(" + this.id + ") unregistered from weather tower.");
+            Writer.writeMessage("Tower says: Baloon#" + super.name + "(" + super.id + ") unregistered from weather tower.");
+            Writer.writeMessage("Coordinates of Baloon#" + super.name + "(" + super.id + "): " +
+                    super.coordinates.getLongitude() + " " + super.coordinates.getLatitude() +
+                    " " + super.coordinates.getHeight());
         }
 
     }
     @Override
     public void registerTower(WeatherTower weatherTower) {
-        System.out.println("Tower says: Baloon#" + this.name + "(" + this.id + "): registered to weather tower.");
-        this.weatherTower = weatherTower;
-        this.weatherTower.register(this);
+        if (this.coordinates.getHeight() > 0) {
+            Writer.writeMessage("Tower says: Baloon#" + super.name + "(" + super.id + ") registered to weather tower.");
+            this.weatherTower = weatherTower;
+            this.weatherTower.register(this);
+        }
     }
 }

@@ -30,12 +30,20 @@ public class Simulator {
     public static void main(String args[])
     {
         try {
+            File f = new File("simulation.txt");
+            if(f.exists() && !f.isDirectory())
+            {
+                f.delete();
+            }
             if (args.length != 1)
                 throw new WrongArgumentsException();
             BufferedReader reader = new BufferedReader(new FileReader(args[0]));
             int cycles = Integer.parseInt(reader.readLine());
+            if (cycles <= 0)
+                throw new NumberFormatException();
             WeatherTower weatherTower = new WeatherTower();
-            readLines(reader, weatherTower);
+            if (readLines(reader, weatherTower) == 1)
+                throw new NumberFormatException();
             while (--cycles >= 0)
                 weatherTower.changeWeather();
         }
@@ -55,14 +63,15 @@ public class Simulator {
         }
     }
 
-    private static void readLines(BufferedReader reader, WeatherTower weatherTower)
+    private static int readLines(BufferedReader reader, WeatherTower weatherTower)
     {
         try {
             String line = reader.readLine();
             while (line != null) {
                 String[] splitLine = line.split(" ");
-                if (splitLine.length != 5)
+                if (splitLine.length != 5) {
                     throw new WrongLineFormatException();
+                }
                 factory.newAircraft(splitLine[0], splitLine[1], Integer.parseInt(splitLine[2]),
                         Integer.parseInt(splitLine[3]), Integer.parseInt(splitLine[4])).registerTower(weatherTower);
                 line = reader.readLine();
@@ -71,14 +80,18 @@ public class Simulator {
         catch (IOException e)
         {
             System.out.println("File reading error");
+            return 1;
         }
         catch (WrongLineFormatException e)
         {
             System.out.println("Wrong line format");
+            return 1;
         }
         catch(NumberFormatException e){
             System.out.println("Error in scenario");
+            return 1;
         }
+        return 0;
     }
 
     private static class WrongArgumentsException extends Exception{
